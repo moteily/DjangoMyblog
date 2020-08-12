@@ -1,0 +1,25 @@
+<!Doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+        .header {text-align:center;font:bold 24px arial;sans-self;}
+    </style>
+    <script>
+        function changeColor(id)
+        {
+            document.getElementById(id).style.color="blue";
+        }
+    </script>
+</head>
+
+
+<body>
+    <p class="header">这是段落标题</p>
+    <button type = "button">确定 </button>
+    <div id='MyDiv'>
+    JavaScript
+    </div>
+    <input type="button" onclick="changeColor('MyDiv')" value="改变颜色">
+</body>
+</html>
