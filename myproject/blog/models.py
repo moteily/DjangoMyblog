@@ -15,5 +15,5 @@ class BlogArticles(models.Model):
     class Meta:
         ordering = ("-publish",)  # 元组只有一个元素时，要加，
 
-    def __str__(self):
+    def __str__(self):  #这两句对整个程序影响不大
         return self.title

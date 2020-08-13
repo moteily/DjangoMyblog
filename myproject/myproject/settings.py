@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'blog',
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE = [  # 中间件，Django的核心，所有的请求、返回命令都由中间件来完成
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,8 +55,10 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
+        # 这一句定义了模板文件的位置，并且该目录的名称templates也在这里定义了，BASE_DIR表示本项目的根目录，用os.join.path()函数
+        # 将两者连接起来，即模板目录的位置是相对项目根目录的templates目录---./template  当然也可以根据自己意愿自定义模板的位置和名称
+        'APP_DIRS': False,  # 不再允许Django按照默认方式寻找模板文件（默认方式是去相应的应用中寻找template）
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -118,4 +120,33 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+# A list of locations of additional static files
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
+# The default file storage backend used during the build process
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+# Absolute path to the directory static files should be collected to.
+# Example: "/var/www/example.com/static/"
+STATIC_ROOT = None
+
+# URL that handles the static files served from STATIC_ROOT.
+# Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+# STATICFILES_FINDERS = (
+#     'django.contrib.staticfiles.finders.FileSystemFinder',
+#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+# )
+# STATIC_URL = '/static/'
