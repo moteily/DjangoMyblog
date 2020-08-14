@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'account',
 ]
 
 MIDDLEWARE = [  # 中间件，Django的核心，所有的请求、返回命令都由中间件来完成
@@ -58,7 +59,8 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
         # 这一句定义了模板文件的位置，并且该目录的名称templates也在这里定义了，BASE_DIR表示本项目的根目录，用os.join.path()函数
         # 将两者连接起来，即模板目录的位置是相对项目根目录的templates目录---./template  当然也可以根据自己意愿自定义模板的位置和名称
-        'APP_DIRS': False,  # 不再允许Django按照默认方式寻找模板文件（默认方式是去相应的应用中寻找template）
+        'APP_DIRS': True,  # 不再允许Django按照默认方式寻找模板文件（默认方式是去相应的应用中寻找template）,修改为True将先搜索DIRS中的
+        #路径，DIRS路径中找不到则在默认的没给应用的template中找
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
