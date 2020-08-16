@@ -1,0 +1,22 @@
+{% load static %}
+<!-- <link rel="stylesheet" href="https://github.com/necolas/normalize.css/blob/master/normalize.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+<div class="container">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="http://www.moteily.com">
+                <img src="{% static '/images/bird1.jpg' %}" width="100px">
+            </a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav" role="navigation">
+                <li><a href="{% url 'blog:blog_title'}">BLOG</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'account:user_login' %}">LOGIN</a></li>
+                {% comment %} 此处可以采用两种方式，可以采用直接写域名或者根据Django urlpatterns中的定义的名字寻找 {% endcomment %}
+                {% comment %} <li><a href="http://127.0.0.1:8000/account/login/">LOGIN</a></li> {% endcomment %}
+            </ul>
+        </div>
+    </nav>
+</div>
