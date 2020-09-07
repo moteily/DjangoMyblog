@@ -51,7 +51,7 @@
                                     success: function (data) {
                                         JsonData = data;
                                         shift = series.data.length >
-                                        15; // 当数据点数量超过 20 个，则指定删除第一个点
+                                        15; // 当数据点数量超过20个，则指定删除第一个点
                                         // 新增点操作
                                         TimeStamp = parseInt(JsonData[i].time);
                                         Value = parseFloat(JsonData[i].cur_cpu);
