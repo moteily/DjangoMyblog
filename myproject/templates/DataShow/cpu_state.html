@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}CPU STATE{% endblock %}
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+    <h1>CPU STATE</h1>
+</div>
+<div class="row">
+    <div class="col-xs-3 col-md-2">
+        <!ul定义一个无序列表，ol定义有序列表 li定义列表中的列表项>
+            <ul>
+                {{ age }}
+                <!-- {% for state in states %}
+                <li>{{ state.number}} {{ state.cores}} {{state.use_rate}}</li>
+                {% endfor %} -->
+            </ul>
+    </div>
+    <div class="col-xs-15 col-md-10">
+        <div id="FlowContainer" style="min-width:400px;height:400px"> </div>
+
+        <script>
+            Highcharts.setOptions({
+                global: {
+                    useUTC: false
+                }
+            });
+
+            function activeLastPointToolip(chart) {
+                var points = chart.series[0].points;
+                chart.tooltip.refresh(points[points.length - 1]);
+            }
+            var chart = Highcharts.chart('FlowContainer', {
+                chart: {
+                    type: 'spline',
+                    marginRight: 10,
+                    events: {
+                        load: function () {
+                            var series = this.series[0],
+                                chart = this;
+                            var JsonData = [];
+                            var i =1;
+                            activeLastPointToolip(chart);
+                            setInterval(function () {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/datashow/chartjson",
+                                    data: {
+                                        "xixi": 123
+                                    },
+                                    //async: false, //这里务必加上
+                                    dataType: "json",
+                                    success: function (data) {
+                                        JsonData = data;
+                                        shift = series.data.length >
+                                        15; // 当数据点数量超过 20 个，则指定删除第一个点
+                                        // 新增点操作
+                                        TimeStamp = parseInt(JsonData[i].time);
+                                        Value = parseFloat(JsonData[i].cur_cpu);
+                                        chart.series[0].addPoint([TimeStamp, Value],
+                                            true, shift);
+                                    },
+                                    error: function () {
+                                        alert("获取数据异常");
+                                    }
+                                });
+                                //var temp = "none";
+
+                                // for (var i = 0; i < JsonData.length; i++) {
+                                //     TimeStamp = parseInt(JsonData[i].time);
+                                //     Value = parseFloat(JsonData[i].cur_cpu);
+                                //     series.addPoint([TimeStamp, Value], true, true);
+                                //     // temp += "***" + TimeStamp + "---" + Value;
+
+                                // }
+                                // $("#Test").html(JsonData.length);
+                                activeLastPointToolip(chart);
+                            }, 3000);
+                        }
+                    }
+                },
+                title: {
+                    text: 'CPU实时数据'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    // tickPixelInterval: 150
+                },
+                yAxis: {
+                    title: {
+                        text: 'CPU Used'
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '<b>' + this.series.name + '</b><br />' +
+                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br />' +
+                            Highcharts.numberFormat(this.y, 2);
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                series: [{
+                    name: '数据库数据',
+                    // data: []
+                    data: (function () {
+                        // 生成随机值
+                        var data = [];
+                            // time = (new Date()).getTime(),
+                        var time = 1595147841000;
+                        var i;
+                        for (i = -10; i <= 0; i += 1) {
+                            data.push({
+                                x: time + i * 1000,
+                                y: 0
+                            });
+                        }
+                        return data;
+                    }())
+                }]
+            });
+        </script>
+    </div>
+</div>
+{% endblock %}

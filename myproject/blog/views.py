@@ -19,4 +19,3 @@ def blog_article(request, article_id):
     article = get_object_or_404(BlogArticles, id=article_id)    #从model层得到数据
     pub = article.publish
     return render(request, "blog/content.html", {"article": article, "publish": pub})   #交给template层的html进行显示
-

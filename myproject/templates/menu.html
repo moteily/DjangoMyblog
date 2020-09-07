@@ -1,0 +1,39 @@
+    <div class="nav nav-pills nav-stacked col-md-1">
+        <li id='home' role="presentation"><a href="{% url 'DataShow:system_monit' %}"
+                onclick="home()">Home</a></li>
+        <li id='cpustate' role="presentation"><a href="{% url 'DataShow:system_monit' %}" onclick="cpustate()">CPU
+                STATE</a></li>
+        <li id='gpustate' role="presentation"><a href="{% url 'DataShow:gpu_monit' %}" onclick="gpustate()">GPU STATE</a>
+        </li>
+    </div>
+    <!-- <script>
+        if (document.location.href = "http://127.0.0.1:8080/datashow/"){
+             $('#home').addClass("active");
+        }
+        function home() {
+            //移除选中
+            $('#home').removeClass("active");
+            $('#cpustate').removeClass("active");
+            $('#gpustate').removeClass("active");
+            //设置选中
+            $('#home').addClass("active");
+        }
+
+        function cpustate() {
+            //移除选中
+            $('#home').removeClass("active");
+            $('#cpustate').removeClass("active");
+            $('#gpustate').removeClass("active");
+            //设置选中
+            $('#cpustate').addClass("active");
+        }
+
+        function gpustate() {
+            //移除选中
+            $('#home').removeClass("active");
+            $('#cpustate').removeClass("active");
+            $('#gpustate').removeClass("active");
+            //设置选中
+            $('#gpustate').addClass("active");
+        }
+    </script> -->

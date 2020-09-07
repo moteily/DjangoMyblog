@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -40,13 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'blog',
     'account',
+    'DataShow',
 ]
 
 MIDDLEWARE = [  # 中间件，Django的核心，所有的请求、返回命令都由中间件来完成
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware', #保证Django免受CSRF攻击
+    # 'django.middleware.csrf.CsrfViewMiddleware', #保证Django免受CSRF攻击
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -80,10 +82,18 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
+    'default':{
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME':'DjangoMyblog',
+        'USER':'root',
+        'PASSWORD':'460716687',
+        'HOST': '47.98.149.64',
+        'PORT':'3306',
+    },
 }
 
 

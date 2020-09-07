@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}GPU STATE{% endblock %}
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+    <h1>GPU MONITOR</h1>
+</div>
+
+<div class="row">
+    <div class="col-xs-6 col-md-4">
+        <div class="row">
+            <ul>
+                <h4>GPU STATE</h1>
+                    <li>Number of GPU: <span id="gpu_count">{{ gpu_count }}</span></li>
+                    <li>GPU Name: <span id="gpu_name">{{ gpu_name }}</span></li>
+                    <li>Driver Info: <span id="gpudriver_info">{{ gpudriver_info }}</span></li>
+                    <li>Total GPU Memory: <span id="gpumem_all">{{ gpumem_all }}</span> MB</li>
+                    <li>Used GPU Memory: <span id="gpumem_use">{{ gpumem_use }}</span> MB</li>
+                    <li>Free GPU Memory: <span id="gpumem_free">{{ gpumem_free }}</span> MB</li>
+                    <li>GPU USE RATE: <span id="cur_gpu">{{ cur_gpu }}</span></li>
+            </ul>
+        </div>
+        <div class="row">
+            <div id="CircleContainer" style="height: 400px"></div>
+        </div>
+
+    </div>
+    <div class="col-xs-12 col-md-8">
+        <div id="FlowContainerGPU" style="min-width:400px;height:550px"> </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+    var chart = null,
+        chart2 = null; // 定义全局变量
+    $(document).ready(function () {
+        chart = Highcharts.chart('FlowContainerGPU', {
+            chart: {
+                type: 'spline',
+                events: {
+                    load: requestDataGPU // 图表加载完毕后执行的回调函数
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: 'GPU STATE'
+            },
+            subtitle: {
+                text: 'Memory of GPU:' + {{gpumem_all}},
+                align: 'right',
+                x: -10
+            },
+            xAxis: {
+                type: 'datetime',
+                // tickPixelInterval: 40,
+                // minRange: 80
+            },
+            yAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2,
+                title: {
+                    text: 'Value',
+                    margin: 10
+                }
+            },
+            series: [{
+                name: 'GPU USED RATE',
+                data: []
+            }]
+        });
+
+        chart2 = Highcharts.chart('CircleContainer', {
+            chart: {
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                },
+                events: {
+                    load: requestDataGPU2 // 图表加载完毕后执行的回调函数
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: 'GPU MEMORY USED STATE',
+                align: 'left',
+                x: 30,
+                y: 70
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'GPU STATE PIE',
+                data: [
+                    ['USED', 45.0],
+                    {
+                    name: 'FREE',
+                    y: 29,
+                    sliced: true,
+                    selected: true,
+                    },
+                ]
+            }]
+        });
+    });
+    var JsonData = [],
+        JsonData2 = [];
+
+    function requestDataGPU() {
+        $.ajax({
+            url: '/datashow/chartjson',
+            success: function (data) {
+                var series = chart.series[0],
+                    shift = series.data.length > 20; // 当数据点数量超过 20 个，则指定删除第一个点
+                JsonData = data;
+                TimeStamp = parseInt(JsonData[0].time);
+                cur_gpu = parseFloat(JsonData[0].cur_gpu);
+                gpumem_use = parseInt(JsonData[0].gpumem_use);
+                gpumem_free = parseInt(JsonData[0].gpumem_free);
+                chart.series[0].addPoint([TimeStamp, cur_gpu], true, shift);
+                $("#gpumem_use").html(gpumem_use);
+                $("#gpumem_free").html(gpumem_free);
+                $("#cur_gpu").html(cur_gpu);
+               
+                activeLastPointToolip(chart);
+                // 3秒后继续调用本函数
+                setTimeout(requestDataGPU, 3000);
+            },
+            cache: false
+        });
+    }
+
+    function requestDataGPU2() {
+        $.ajax({
+            url: '/datashow/chartjson',
+            success: function (data) {
+                var series = chart2.series[0],
+                    JsonData2 = data;
+                // TimeStamp = parseInt(JsonData[0].time);
+                cur_gpu = parseFloat(JsonData2[0].cur_gpu);
+                gpumem_use = parseInt(JsonData2[0].gpumem_use);
+                gpumem_free = parseInt(JsonData2[0].gpumem_free);
+                chart2.series[0].setData([cur_gpu*100, 100-cur_gpu*100]);
+                //alert("获取数据异常222");
+                // 3秒后继续调用本函数
+                setTimeout(requestDataGPU2, 3000);
+            },
+            cache: false
+        });
+    }
+
+    function activeLastPointToolip(chart) {
+        var points = chart.series[0].points;
+        // chart.tickPixelInterval = 20;
+        chart.tooltip.refresh(points[points.length - 1]);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}CPU STATE{% endblock %}
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+    <h1>SYSTEM MONITOR</h1>
+</div>
+
+<div class="row">
+    <div class="col-xs-9 col-md-6">
+        <div id="FlowContainerMem" style="min-width:400px;height:400px"> </div>
+    </div>
+    <div class="col-xs-9 col-md-6">
+        <div id="FlowContainerCPU" style="min-width:400px;height:400px"> </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+
+<script>
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+    var chart = null,
+        chart2 = null; // 定义全局变量
+    var cpu_cores = {{ cpu_cores }},mem_all = {{ mem_all }};
+    $(document).ready(function () {
+        chart = Highcharts.chart('FlowContainerCPU', {
+            chart: {
+                type: 'spline',
+                events: {
+                    load: requestDataCPU // 图表加载完毕后执行的回调函数
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: 'CPU STATE'
+            },
+            subtitle: {
+                text: 'Total Cores:' + cpu_cores,
+                align: 'right',
+                x: -10
+            },
+            xAxis: {
+                type: 'datetime',
+                // tickPixelInterval: 40,
+                // minRange: 80
+            },
+            yAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2,
+                title: {
+                    text: 'Value',
+                    margin: 10
+                }
+            },
+            series: [{
+                name: 'CPU USED RATE',
+                data: []
+            }]
+        });
+        chart2 = Highcharts.chart('FlowContainerMem', {
+            chart: {
+                type: 'spline',
+                events: {
+                    load: requestDataMem // 图表加载完毕后执行的回调函数
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: 'MEMORY STATE'
+            },
+            subtitle: {
+                text: 'Total Memory:' + mem_all,
+                align: 'right',
+                x: -10
+            },
+            xAxis: {
+                type: 'datetime',
+                // tickPixelInterval: 40,
+                // minRange: 80
+            },
+            yAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2,
+                title: {
+                    text: 'Value',
+                    margin: 10
+                }
+            },
+            series: [{
+                name: 'MEMORY USED RATE',
+                data: []
+            }]
+        });
+    });
+    var JsonData = [];
+
+    function requestDataCPU() {
+        $.ajax({
+            url: '/datashow/chartjson',
+            success: function (data) {
+                var series = chart.series[0],
+                    shift = series.data.length > 20; // 当数据点数量超过 20 个，则指定删除第一个点
+                JsonData = data;
+                TimeStamp = parseInt(JsonData[0].time);
+                Value = parseFloat(JsonData[0].cur_cpu);
+                chart.series[0].addPoint([TimeStamp, Value], true, shift);
+                activeLastPointToolip(chart);
+                // 3秒后继续调用本函数
+                setTimeout(requestDataCPU, 3000);
+            },
+            cache: false
+        });
+    }
+
+    function requestDataMem() {
+        $.ajax({
+            url: '/datashow/chartjson',
+            success: function (data) {
+                var series = chart2.series[0],
+                    shift = series.data.length > 20; // 当数据点数量超过 20 个，则指定删除第一个点
+                JsonData = data;
+                TimeStamp = parseInt(JsonData[0].time);
+                Value = parseFloat(JsonData[0].cur_mem);
+                chart2.series[0].addPoint([TimeStamp, Value], true, shift);
+                activeLastPointToolip(chart2);
+                // 3秒后继续调用本函数
+                setTimeout(requestDataMem, 3000);
+            },
+            cache: false
+        });
+    }
+
+    function activeLastPointToolip(chart) {
+        var points = chart.series[0].points;
+        // chart.tickPixelInterval = 20;
+        chart.tooltip.refresh(points[points.length - 1]);
+    }
+</script>
+{% endblock %}

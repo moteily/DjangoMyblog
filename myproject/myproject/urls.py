@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include(('blog.urls','blog'),namespace='blog')),
     path('account/', include(('account.urls','account'),namespace='account')),
+    path('datashow/', include(('DataShow.urls', 'DataShow'), namespace='DataShow')),
 ]
