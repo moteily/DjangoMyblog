@@ -1,1 +1,1 @@
-# DjangoMyblog
+# DjangoSystemMonitor
