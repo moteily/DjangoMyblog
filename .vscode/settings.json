@@ -1,6 +1,7 @@
 [
     //"python.pythonPath": "D:\\CodeApp\\Anaconda\\python.exe",
     {
+        "python.pythonPath": "D:\\Anaconda\\python.exe",
         "django.snippets.exclude": [
             "cms",
             "wagtail"
